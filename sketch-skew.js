@@ -5,12 +5,22 @@ const settings = {
   dimensions: [ 1000, 1000 ]
 };
 
-const rectangleWithApi = (context, w, h, x, y) => {
+const getCoordinates = (width, height) => {
+  const x = width * 0.5;
+  const y = width * 0.5;
+  const w = width * 0.6;
+  const h = height * 0.1;
+  return [x, y, w, h];
+}
+
+const rectangleWithApi = (context, width, height) => {
+  const [x, y, w, h] = getCoordinates(width, height);
   context.translate(x, y);
   context.strokeRect(w * -0.5, h * -0.5, w, h);
 }
 
-const rectanglePointToPoint = (context, w, h, x, y) => {
+const rectanglePointToPoint = (context, width, height) => {
+  const [x, y, w, h] = getCoordinates(width, height);
   context.translate(x, y);
   context.beginPath();
   context.moveTo(w * -0.5, h * -0.5);
@@ -21,10 +31,9 @@ const rectanglePointToPoint = (context, w, h, x, y) => {
   context.stroke();
 }
 
-
-const rectangleByCoordinates = (context, w, h, x, y) => {
+const rectangleByCoordinates = (context, width, height) => {
+  const [x, y, w, h] = getCoordinates(width, height);
   context.translate(x, y);
-  context.translate(0, 0);
   context.beginPath();
   context.moveTo(w * -0.5, h * -0.5);
   context.lineTo(w * 0.5, h * -0.5);
@@ -34,42 +43,32 @@ const rectangleByCoordinates = (context, w, h, x, y) => {
   context.stroke();
 }
 
-const skewedRectangle = (context, rx, ry, h) => {
+const skewedRectangle = (context, angle, w, h) => {
+  let angleRadius = math.degToRad(angle);
+  let rx = Math.cos(angleRadius) * w;
+  let ry = Math.sin(angleRadius) * w;
+
   context.translate(rx * -0.5, (ry + h) * -0.5);
   context.beginPath();
-  
   context.moveTo(0, 0);
+  
   context.lineTo(rx, ry);
   context.stroke();
 }
 
 const sketch = () => {
 
-  let x, y, h, w;
-  let angle, rx, ry;
+  let angle;
 
   return ({ context, width, height }) => {
     context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
 
-    x = width * 0.5;
-    y = width * 0.5;
-    w = width * 0.6;
-    h = height * 0.1;
-
     angle = 30;
-    let angleRadius = math.degToRad(angle);
-    rx = Math.cos(angleRadius) * w;
-    ry = Math.sin(angleRadius) * w;
-
-    console.log(rx);
-    console.log(ry);
-    console.log(w);
-
     context.save();
 
     context.strokeStyle = 'blue';
-    skewedRectangle(context, rx, ry, h);
+    rectangleByCoordinates(context, width, height);
 
     context.restore();
   };
