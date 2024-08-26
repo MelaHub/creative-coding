@@ -4,8 +4,11 @@ const random = require("canvas-sketch-util/random");
 const Color = require("canvas-sketch-util/color");
 const risoColors = require("riso-colors");
 
+const seed = random.getRandomSeed();
+
 const settings = {
-  dimensions: [ 1000, 1000 ]
+  dimensions: [ 1000, 1000 ],
+  name: seed
 };
 
 const getConf = (width, height, rectColors) => {
@@ -84,13 +87,13 @@ const getRectanglesConf = (numRect, colors, width, height) => {
   return rectangles;
 }
 
-const drawRectangles = (context, rectangles, degrees, mask) =>  {
-
+const drawRectangles = (context, rectangles, degrees
+) =>  {
+  console.log("Using seed " + seed);
   rectangles.forEach(rect => {
     const {x, y, w, h, fill, stroke, blend} = rect;
     context.save();
 
-    // context.translate(-mask.x, -mask.y);
     context.translate(x, y);
     context.strokeStyle = stroke;
     context.fillStyle = fill;
@@ -181,7 +184,7 @@ const sketch = ({ context, width, height }) => {
     const colors = getCanvaColors(colorNum);
     drawMask(context, mask);
     context.clip();
-    drawRectangles(context, getRectanglesConf(numRect, colors, width, height), degrees, mask);
+    drawRectangles(context, getRectanglesConf(numRect, colors, width, height), degrees);
     drawOutline(context, mask, colors);
   }
 };
