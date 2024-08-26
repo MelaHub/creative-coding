@@ -63,12 +63,7 @@ const skewedRectangle = (context, w=600, h=200, degrees=-45) => {
 
 }
 
-const sketch = ({ context, width, height }) => {
-
-  const numRect = 40;
-  const degrees = -30;
-  const bgColor = random.pick(risoColors).hex;
-  const rectColorNum = 2;
+const getRectanglesConf = (numRect, rectColorNum, width, height) => {
 
   let rectangles = [];
 
@@ -81,43 +76,97 @@ const sketch = ({ context, width, height }) => {
     rectangles.push(getConf(width, height, rectColors));
   }
 
+  return rectangles;
+}
+
+const drawRectangles = (context, rectangles, degrees, width, height) =>  {
+
+  rectangles.forEach(rect => {
+    const {x, y, w, h, fill, stroke, blend} = rect;
+    context.save();
+
+    context.translate(x, y);
+    context.strokeStyle = stroke;
+    context.fillStyle = fill;
+    context.lineWidth = 10;
+
+    context.globalCompositeOperation = blend;
+
+    skewedRectangle(context, w, h, degrees);
+
+    let shadowColor = Color.offsetHSL(fill, 0, 0, -20);
+    shadowColor.rgba[3] = 0.5;
+
+    context.shadowColor = Color.style(shadowColor.rgba);
+    context.shadowOffsetX = -10;
+    context.shadowOffsetY = 20;
+
+    context.fill();
+
+    context.shadowColor = null;
+    context.stroke();
+
+    context.globalCompositeOperation = 'source-over';
+    context.lineWidth = 2;
+    context.strokeStyle = 'black';
+
+    context.stroke();
+
+    context.restore();
+  }
+  );
+}
+
+const drawMask = (context, mask) => {
+
+  context.save();
+
+  context.translate(mask.x, mask.y);
+
+  drawPolygon({context, radius: mask.radius, sides: mask.sides});
+
+  context.lineWidth = 10; 
+  context.strokeStyle = 'black';
+
+  context.stroke();
+  context.restore();
+}
+
+const drawPolygon = ({context, radius = 100, sides = 3}) => {
+  const slice = Math.PI * 2 / sides;
+
+  context.beginPath();
+  context.moveTo(0, -radius);
+  for (let i = 1; i < sides; i++) {
+    const theta = i * slice - Math.PI * 0.5;
+    context.lineTo(Math.cos(theta) * radius, Math.sin(theta) * radius);
+  }
+  context.closePath();
+}
+
+const sketch = ({ context, width, height }) => {
+
+  const numRect = 40;
+  const degrees = -30;
+  const bgColor = random.pick(risoColors).hex;
+  const rectColorNum = 2;
+
+  const mask = {
+    radius: width * 0.4,
+    sides: 3,
+    x: width * 0.5,
+    y: height * 0.5
+  };
+
+
   return ({ context, width, height }) => {
     context.fillStyle = bgColor;
     context.fillRect(0, 0, width, height);
 
-    rectangles.forEach(rect => {
-      const {x, y, w, h, fill, stroke, blend} = rect;
-      context.save();
-
-      context.translate(x, y);
-      context.strokeStyle = stroke;
-      context.fillStyle = fill;
-      context.lineWidth = 10;
-
-      context.globalCompositeOperation = blend;
-
-      skewedRectangle(context, w, h, degrees);
-
-      let shadowColor = Color.offsetHSL(fill, 0, 0, -20);
-      shadowColor.rgba[3] = 0.5;
-
-      context.shadowColor = Color.style(shadowColor.rgba);
-      context.shadowOffsetX = -10;
-      context.shadowOffsetY = 20;
-
-      context.fill();
-
-      context.shadowColor = null;
-      context.stroke();
-
-      context.globalCompositeOperation = 'source-over';
-      context.lineWidth = 2;
-      context.strokeStyle = 'black';
-      context.stroke();
-
-      context.restore();
-    }
-    );
+    drawMask(context, mask);
+    context.clip();
+    drawRectangles(context, getRectanglesConf(numRect, rectColorNum, width, height), degrees, width, height);
+    
   }
 };
 
