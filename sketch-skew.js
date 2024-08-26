@@ -13,64 +13,67 @@ const getCoordinates = (width, height) => {
   return [x, y, w, h];
 }
 
-const rectangleWithApi = (context, width, height) => {
-  const [x, y, w, h] = getCoordinates(width, height);
-  context.translate(x, y);
+const getCoordinatesByAngle = (w, h, degrees) => {
+  let radiant = math.degToRad(degrees);
+  let rx = Math.cos(radiant) * w;
+  let ry = Math.sin(radiant) * w;
+  return [rx, ry];
+}
+
+const rectangleWithApi = (context, w, h) => {
   context.strokeRect(w * -0.5, h * -0.5, w, h);
 }
 
-const rectanglePointToPoint = (context, width, height) => {
-  const [x, y, w, h] = getCoordinates(width, height);
-  context.translate(x, y);
+const rectanglePointToPoint = (context, w, h) => {
   context.beginPath();
   context.moveTo(w * -0.5, h * -0.5);
   context.lineTo(w * 0.5, h * -0.5);
   context.lineTo(w * 0.5, h * 0.5);
   context.lineTo(w * -0.5, h * 0.5);
   context.closePath();
-  context.stroke();
 }
 
-const rectangleByCoordinates = (context, width, height) => {
-  const [x, y, w, h] = getCoordinates(width, height);
-  context.translate(x, y);
+const rectangleByCoordinates = (context, w, h) => {
   context.beginPath();
   context.moveTo(w * -0.5, h * -0.5);
   context.lineTo(w * 0.5, h * -0.5);
   context.lineTo(w * 0.5, h * 0.5);
   context.lineTo(w * -0.5, h * 0.5);
   context.closePath();
-  context.stroke();
 }
 
-const skewedRectangle = (context, angle, w, h) => {
-  let angleRadius = math.degToRad(angle);
-  let rx = Math.cos(angleRadius) * w;
-  let ry = Math.sin(angleRadius) * w;
-
+const skewedRectangle = (context, w=600, h=200, degrees=-45) => {
+  const [rx, ry] = getCoordinatesByAngle(w, h, degrees);
   context.translate(rx * -0.5, (ry + h) * -0.5);
   context.beginPath();
   context.moveTo(0, 0);
   
   context.lineTo(rx, ry);
-  context.stroke();
+  context.lineTo(rx, ry + h);
+  context.lineTo(0, h);
+  context.closePath();
+
 }
 
 const sketch = () => {
 
-  let angle;
+  let angle, x, y, w, h;
 
   return ({ context, width, height }) => {
     context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
 
-    angle = 30;
+    [x, y, w, h] = getCoordinates(width, height);
+  
     context.save();
 
+    context.translate(x, y);
     context.strokeStyle = 'blue';
-    rectangleByCoordinates(context, width, height);
+
+    skewedRectangle(context);
 
     context.restore();
+    context.stroke();
   };
 };
 
