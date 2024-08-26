@@ -56,20 +56,24 @@ const skewedRectangle = (context, w=600, h=200, degrees=-45) => {
 
 }
 
-const sketch = () => {
-
-  let x, y, w, h;
+const sketch = ({ context, width, height }) => {
 
   const numRect = 20;
   const degrees = -30;
+
+  let rectangles = [];
+
+  for (let i = 0; i < numRect; i ++) {
+    let [x, y, w, h] = getCoordinates(width, height);
+    rectangles.push({x, y, w, h});
+  }
 
   return ({ context, width, height }) => {
     context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
 
-    for (let i = 0; i < 20; i ++) {
-      [x, y, w, h] = getCoordinates(width, height);
-    
+    rectangles.forEach(rect => {
+      const {x, y, w, h} = rect;
       context.save();
 
       context.translate(x, y);
@@ -80,7 +84,8 @@ const sketch = () => {
       context.stroke();
       context.restore();
     }
-  };
+    );
+  }
 };
 
 canvasSketch(sketch, settings);
