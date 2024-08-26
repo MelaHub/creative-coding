@@ -63,28 +63,34 @@ const skewedRectangle = (context, w=600, h=200, degrees=-45) => {
 
 }
 
-const getRectanglesConf = (numRect, rectColorNum, width, height) => {
+const getCanvaColors = (colorNum) => {
+
+  let colors = [];
+  for (i = 0; i < colorNum; i++) {
+    colors.push(random.pick(risoColors));
+  }
+
+  return colors;
+}
+
+const getRectanglesConf = (numRect, colors, width, height) => {
 
   let rectangles = [];
 
-  let rectColors = [];
-  for (i = 0; i < rectColorNum; i++) {
-    rectColors.push(random.pick(risoColors));
-  }
-
   for (let i = 0; i < numRect; i ++) {
-    rectangles.push(getConf(width, height, rectColors));
+    rectangles.push(getConf(width, height, colors));
   }
 
   return rectangles;
 }
 
-const drawRectangles = (context, rectangles, degrees, width, height) =>  {
+const drawRectangles = (context, rectangles, degrees, mask) =>  {
 
   rectangles.forEach(rect => {
     const {x, y, w, h, fill, stroke, blend} = rect;
     context.save();
 
+    // context.translate(-mask.x, -mask.y);
     context.translate(x, y);
     context.strokeStyle = stroke;
     context.fillStyle = fill;
@@ -124,11 +130,6 @@ const drawMask = (context, mask) => {
   context.translate(mask.x, mask.y);
 
   drawPolygon({context, radius: mask.radius, sides: mask.sides});
-
-  context.lineWidth = 10; 
-  context.strokeStyle = 'black';
-
-  context.stroke();
   context.restore();
 }
 
@@ -144,12 +145,26 @@ const drawPolygon = ({context, radius = 100, sides = 3}) => {
   context.closePath();
 }
 
+const drawOutline = (context, mask, colors) => {
+  context.save();
+  context.translate(mask.x, mask.y);
+  context.lineWidth = 20;
+  
+  drawPolygon({context, radius: mask.radius - context.lineWidth, sides: mask.sides});
+  
+  context.globalCompositeOperation = 'color-burn';
+  
+  context.strokeStyle = colors[0].hex;
+  context.stroke();
+  context.restore();
+}
+
 const sketch = ({ context, width, height }) => {
 
   const numRect = 40;
   const degrees = -30;
   const bgColor = random.pick(risoColors).hex;
-  const rectColorNum = 2;
+  const colorNum = 2;
 
   const mask = {
     radius: width * 0.4,
@@ -163,10 +178,11 @@ const sketch = ({ context, width, height }) => {
     context.fillStyle = bgColor;
     context.fillRect(0, 0, width, height);
 
+    const colors = getCanvaColors(colorNum);
     drawMask(context, mask);
     context.clip();
-    drawRectangles(context, getRectanglesConf(numRect, rectColorNum, width, height), degrees, width, height);
-    
+    drawRectangles(context, getRectanglesConf(numRect, colors, width, height), degrees, mask);
+    drawOutline(context, mask, colors);
   }
 };
 
