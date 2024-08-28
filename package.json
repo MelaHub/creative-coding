@@ -4,7 +4,9 @@
   "description": "",
   "main": "sketch-skew.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +15,10 @@
     "canvas-sketch": "^0.7.7",
     "canvas-sketch-util": "^1.10.0",
     "riso-colors": "^1.0.1"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   }
 }
