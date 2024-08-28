@@ -1,20 +1,29 @@
 const path = require('path');
 
 module.exports = {
-  entry: './sketch-skew.js',
+  entry: './1.sketch-skew.js',
   output: {
-    filename: 'sketch-skew.js',
+    filename: 'skew.js',
     path: path.resolve(__dirname, 'dist')
   },
   mode: 'production'
 };
 
 module.exports = {
-    entry: './sketch-curves.js',
+    entry: './2a.sketch-interactive-curve.js',
     output: {
-      filename: 'sketch-curves.js',
+      filename: 'interactive-curve.js',
       path: path.resolve(__dirname, 'dist')
     },
     mode: 'production'
   };
   
+module.exports = {
+    entry: './2b.sketch-grid-curves.js',
+    output: {
+        filename: 'curves.js',
+        path: path.resolve(__dirname, 'dist')
+    },
+    mode: 'production'
+};
+

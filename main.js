@@ -9,9 +9,11 @@ function loadPage(page) {
     if (page === 'home') {
         content.innerHTML = '<h1>Welcome!</h1><h2>Hopefully this page will be nicer and full of content soon!</h2>';
     } else if (page === 'skewed') {
-        loadScript('dist/sketch-skew.js');
+        loadScript('dist/skew.js');
+    } else if (page === 'interactive-curve') {
+        loadScript('dist/interactive-curve.js');
     } else if (page === 'curves') {
-        loadScript('dist/sketch-curves.js');
+        loadScript('dist/curves.js');
     }
 }
 
