@@ -6,6 +6,7 @@ const colormap = require('colormap');
 const settings = {
   dimensions: [ 1080, 1080 ],
   id: 'curves',
+  animate: true
 };
 
 const sketch = ({ width, height }) => {
@@ -24,6 +25,7 @@ const sketch = ({ width, height }) => {
   const points = [];
   let amplitude = 90;
   let frequency = 0.002;
+  let n;
 
   let colors = colormap({
     colormap: 'summer',
@@ -35,15 +37,15 @@ const sketch = ({ width, height }) => {
   for (let i = 0; i < numCells; i++) {
     let x = cellWidth * i % gridWidth;
     let y = cellHeight * Math.floor(i / cols);
-    const n = random.noise2D(x, y, frequency = frequency, amplitude = amplitude);
-    x += n;
-    y += n;
+    n = random.noise2D(x, y, frequency = frequency, amplitude = amplitude);
+    // x += n;
+    // y += n;
     let lineWidth  = math.mapRange(n, -amplitude, amplitude, 0, 5);
     let color = colors[Math.floor(math.mapRange(n, -amplitude, amplitude, 0, amplitude))];
     points.push(new Point({x, y, lineWidth: lineWidth, color: color}));
   }
 
-  return ({ context, width, height }) => {
+  return ({ context, width, height, frame }) => {
     context.fillStyle = 'black';
     context.fillRect(0, 0, width, height);
 
@@ -52,7 +54,12 @@ const sketch = ({ width, height }) => {
     context.translate(marginX, marginY);
     context.translate(cellWidth * 0.5, cellHeight * 0.5);
     context.lineWidth = 4;
-    context.strokeStyle = 'green';
+
+    points.forEach(point => {
+      n = random.noise2D(point.initialX + frame * 3, point.initialY, frequency = frequency, amplitude = amplitude);
+      point.x = point.initialX + n;
+      point.y = point.initialY + n;
+    });
 
     let previousControlPoint;
 
@@ -102,19 +109,8 @@ class Point {
     this.size = size;
     this.color = color;
     this.lineWidth = lineWidth;
-  }
-
-  draw(context) {
-    context.save();
-
-    context.translate(this.x, this.y);
-    
-    context.beginPath();
-    context.moveTo(this.x, this.y);
-    context.arc(0, 0, this.size, 0, Math.PI * 2);
-    context.fill();
-    
-    context.restore();
+    this.initialX = x;
+    this.initialY = y;
   }
 
 };
