@@ -1,5 +1,8 @@
+/* Use Montserrat font */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
@@ -11,9 +14,10 @@ body {
     width: 100%;
 }
 
+/* Sidebar styling with teal colors */
 .sidebar {
     width: 200px;
-    background-color: #333;
+    background-color: #008080; /* Teal background */
     color: white;
     padding: 15px;
 }
@@ -28,13 +32,20 @@ body {
 }
 
 .sidebar ul li a {
-    color: white;
+    color: #ffffff; /* White text */
     text-decoration: none;
     font-size: 18px;
+    padding: 10px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Hover effect with rounded corners and blue background */
 .sidebar ul li a:hover {
-    text-decoration: underline;
+    background-color: #0000FF; /* Blue background on hover */
+    color: #008080; /* Teal text on hover */
+    border-radius: 8px; /* Rounded corners */
 }
 
 main {
@@ -42,6 +53,7 @@ main {
     padding: 20px;
     background-color: #f4f4f4;
 }
+
 
 #content {
     text-align: center;
