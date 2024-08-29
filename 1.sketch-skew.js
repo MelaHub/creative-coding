@@ -8,7 +8,8 @@ const seed = random.getRandomSeed();
 
 const settings = {
   dimensions: [ 1000, 1000 ],
-  name: seed
+  name: seed,
+  canva: document.getElementById('skewed-canvas'),
 };
 
 const getConf = (width, height, rectColors) => {

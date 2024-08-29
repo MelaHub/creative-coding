@@ -9,6 +9,9 @@ function loadPage(page) {
     if (page === 'home') {
         content.innerHTML = '<h1>Welcome!</h1><h2>Hopefully this page will be nicer and full of content soon!</h2>';
     } else if (page === 'skewed') {
+        let canva = document.createElement('canvas');
+        canva.setAttribute("id", "skewed-canvas"); 
+        content.appendChild(canva);  
         loadScript('dist/skew.js');
     } else if (page === 'interactive-curve') {
         loadScript('dist/interactive-curve.js');

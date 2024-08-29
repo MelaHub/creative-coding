@@ -8,7 +8,7 @@ module.exports = {
   },
   mode: 'production'
 };
-
+/* 
 module.exports = {
     entry: './2a.sketch-interactive-curve.js',
     output: {
@@ -26,4 +26,4 @@ module.exports = {
     },
     mode: 'production'
 };
-
+*/
