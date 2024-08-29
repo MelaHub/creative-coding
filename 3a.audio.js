@@ -1,4 +1,7 @@
 const canvasSketch = require('canvas-sketch');
+const math = require('canvas-sketch-util/math');
+const eases = require('eases');
+const random = require('canvas-sketch-util/random');
 
 const settings = {
   dimensions: [ 1080, 1080 ],
@@ -8,28 +11,70 @@ const settings = {
 let audio;
 let audioContext, audioData, sourceNode, analyserNode;
 let manager;
+let minDb, maxDb;
 
 const sketch = () => {
+  const numCircles = 5;
+  const numSlices = 9;
+  const slice = Math.PI * 2 / numSlices;
+  const baseRadius = 200;
+
+  const bins = [];
+  let bin;
+  for (let i = 0; i < numCircles * numSlices; i++) {
+    bin = random.rangeFloor(4, 64); 
+    if (random.value() > 0.5) bin = 0; 
+    bins.push(bin);
+  }
+
+  const lineWidths = [];
+  for (let i = 0; i < numCircles; i++) {
+    const t = i / (numCircles - 1);
+    lineWidths.push(eases.quadIn(t) * 200 + 20);
+  }
 
   return ({ context, width, height }) => {
-    context.fillStyle = 'white';
+    context.fillStyle = '#EEEAE0';
     context.fillRect(0, 0, width, height);
 
     if (!audioContext) return;
 
     analyserNode.getFloatFrequencyData(audioData);
 
-    const avg = getAverage(audioData);
-
     context.save();
     context.translate(width * 0.5, height * 0.5);
-    context.lineWidth = 10;
+      
+    let cRadius = baseRadius;
 
-    context.beginPath();
-    context.arc(0, 0, Math.abs(avg), 0, Math.PI * 2);
-    context.stroke();
+    for (let i = 0; i < numCircles; i++) {  
+      context.save();
+      /*context.lineWidth = lineWidths[i];
+      const radius = baseRadius + i * 50;
+      context.strokeStyle = 'black';*/
+      
+      for (let j = 0; j < numSlices; j++) {
+        context.rotate(slice);
 
+        const bin = bins[i * numSlices + j];
+        if (!bin) continue;
+        const mapped = math.mapRange(audioData[bin], minDb, maxDb, 0, 1, true);
+        
+        const lineWidth = lineWidths[i] * mapped;
+        if (lineWidth < 0) continue;
+        context.lineWidth = lineWidth;
+        
+
+        context.beginPath();
+        context.arc(0, 0, cRadius + context.lineWidth * 0.5, 0, slice);
+        context.stroke();
+      }
+
+      cRadius += context.lineWidth;
+      context.restore();
+      
+    }
     context.restore();
+    
   };
 };
 
@@ -43,22 +88,25 @@ const addListeners = () => {
       audio.pause();
       manager.pause();
     }
+    minDb = analyserNode.minDecibels;
+    maxDb = analyserNode.maxDecibels;
   });
 }
 
 const createAudio = () => {
   audio = document.createElement('audio');
-  audio.src = 'audio/7_TRIBALE_DANI_MELA_SILVIAH.mp3';
+  audio.src = 'audio/BayCityShimmy.mp3';
 
   audioContext = new AudioContext();
   sourceNode = audioContext.createMediaElementSource(audio);
   sourceNode.connect(audioContext.destination);
 
   analyserNode = audioContext.createAnalyser();
+  analyserNode.fftSize = 512;
+  analyserNode.smoothingTimeConstant = 0.9;
   sourceNode.connect(analyserNode);
 
   audioData = new Float32Array(analyserNode.frequencyBinCount);
-  console.log(audioData.length)
 }
 
 const getAverage = (data) => {
