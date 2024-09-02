@@ -1,4 +1,6 @@
 const canvasSketch = require('canvas-sketch');
+const random = require('canvas-sketch-util/random');
+const eases = require('eases');
 
 const settings = {
   dimensions: [ 1080, 1080 ],
@@ -12,12 +14,32 @@ const cursor = { x: 9999, y: 9999 };
 const sketch = ({width, height, canvas}) => {
 
   let particles = [];
+  let pos = [];
+  const numCircles = 15;
+  const gapCircle = 8;
+  const gapDot = 4;
+  let dotRadius = 12;
+  let cirRadius = 0;
+  const fitRadius = dotRadius;
+
   elCanvas = canvas;
   canvas.addEventListener('mousedown', onMouseDown)
 
-  for (let i = 0; i < 1; i++) {
-      particles.push(new Particle(width / 2, height / 2));
+  for (let i = 0; i < numCircles; i++) {
+    const circumference = Math.PI * 2 * cirRadius;
+    const numParticles = i ? Math.floor(circumference / (fitRadius * 2 + gapDot)) : 1;
+    const fitSlice = Math.PI * 2 / numParticles;
+    let radius = dotRadius;
+    for (let j = 0; j < numParticles; j++) {
+      const theta = fitSlice * j;
+      x = Math.cos(theta) * cirRadius + width / 2;
+      y = Math.sin(theta) * cirRadius + height / 2;
+      particles.push(new Particle(x, y, radius=dotRadius));
+    }
+    cirRadius += fitRadius * 2 + gapCircle;
+    dotRadius = (1 - eases.quadOut(i / numCircles)) * fitRadius;
   }
+
 
   return ({ context, canvas, width, height }) => {
     context.fillStyle = 'black';
@@ -51,10 +73,10 @@ class Particle {
     this.ix = x;
     this.iy = y;
 
-    this.minDist = 100;
-    this.pushFactor = 0.02;
-    this.pullFactor = 0.004;
-    this.dampFactor = 0.95;
+    this.minDist = random.range(100, 200);
+    this.pushFactor = random.range(0.01, 0.02);
+    this.pullFactor = random.range(0.002, 0.006);
+    this.dampFactor = random.range(0.9, 0.95);
   }
 
   update () {
