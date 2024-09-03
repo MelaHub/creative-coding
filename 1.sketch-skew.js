@@ -9,7 +9,7 @@ const seed = random.getRandomSeed();
 const settings = {
   dimensions: [ 1000, 1000 ],
   name: seed,
-  canva: document.getElementById('skewed-canvas'),
+  canvas: document.getElementById('skewed-canvas'),
 };
 
 const getConf = (width, height, rectColors) => {
@@ -190,4 +190,6 @@ const sketch = ({ context, width, height }) => {
   }
 };
 
-canvasSketch(sketch, settings);
+if (settings.canvas) {
+  canvasSketch(sketch, settings);
+}

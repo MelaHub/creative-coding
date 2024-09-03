@@ -109,7 +109,7 @@ const loadImage = async (url) => {
 }
 
 const start = async () => {
-  img1 = await loadImage('images/reindeer.jpg');
+  img1 = await loadImage('images/girl.jpg');
   img2 = await loadImage('images/flowers.jpg');
   canvasSketch(sketch, settings);
 }

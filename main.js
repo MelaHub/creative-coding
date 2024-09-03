@@ -22,9 +22,7 @@ function loadPage(page) {
 
 function loadScript(scriptName) {
     const content = document.getElementById('content');
-    content.innerHTML = '';
-
-    const script = document.createElement('script');
+     const script = document.createElement('script');
     script.src = scriptName;
     
     content.appendChild(script);
