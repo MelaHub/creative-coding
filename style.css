@@ -9,9 +9,7 @@ body {
 header {
     background-color: #004d40;
     padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    position: relative;
 }
 
 .menu-icon {
@@ -26,20 +24,26 @@ nav {
     background-color: #004d40;
     position: absolute;
     top: 50px;
-    right: 10px;
-    border-radius: 5px;
-    padding: 10px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    border-radius: 0 0 5px 5px;
 }
 
 nav a {
     color: white;
     text-decoration: none;
-    padding: 5px 0;
+    padding: 15px 0;
+    display: block;
+    border-bottom: 1px solid #00796b;
+}
+
+nav a:last-child {
+    border-bottom: none;
 }
 
 nav a:hover {
     background-color: #00796b;
-    border-radius: 3px;
 }
 
 main {
@@ -56,13 +60,24 @@ canvas {
 }
 
 @media (min-width: 600px) {
+
     nav {
-        display: flex;
+        display: block;
         position: static;
-        flex-direction: row;
+        width: auto;
+        flex-direction: column;
+        border-radius: 0;
+        padding: 0;
+        text-align: left;
     }
 
-    .menu-icon {
+    nav a {
+        border: none;
+        padding: 15px;
         display: block;
+    }
+
+    nav a:hover {
+        background-color: #00796b;
     }
 }
