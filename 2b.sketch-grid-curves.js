@@ -5,8 +5,8 @@ const colormap = require('colormap');
 
 const settings = {
   dimensions: [ 1080, 1080 ],
-  id: 'curves',
-  animate: true
+  animate: true,
+  canvas: document.getElementById('moving-curve'),
 };
 
 const sketch = ({ width, height }) => {
@@ -99,7 +99,9 @@ const sketch = ({ width, height }) => {
   
 };
 
-canvasSketch(sketch, settings);
+if (settings.canvas) {
+  canvasSketch(sketch, settings);
+}
 
 class Point {
 
