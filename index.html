@@ -4,22 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Welcome</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="static/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">  
 </head>
 <body>
-    <header>
-        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-        <nav id="menu">
-            <a href="index.html">Home</a>
-            <a href="prj1.html">Project 1</a>
-            <a href="prj2.html">Project 2</a>
-            <a href="prj3.html">Project 3</a>
-        </nav>
-    </header>
+    <nav id="menu" class="menu-closed">
+        <a href="index.html" class="selected">Home</a>
+        <a href="static/skew.html">Skewed rectangles in a triangle</a>
+        <a href="static/interactive-curve.html">Curve generator</a>
+        <a href="static/moving-curves.html">Moving curves</a>
+        <a href="static/moving-circle.html">Circle moving with music</a>
+        <a href="static/moving-circles.html">Audio visualization</a>
+        <a href="static/particles.html">Particles</a>
+        <a href="static/particles-image.html">An image made by particles</a>
+    </nav>
     <main>
-        <h1>Welcome to Our Website</h1>
-        <p>This is the home page. Use the menu to navigate through the site.</p>
+        <h1>Welcome 🎨🖼️🖌️👩🏻‍🎨 </h1>
+        <p>This page is a showcase of the code I've written while taking the <a href="https://www.domestika.org/en/courses/3862-creative-coding-2-0-in-js-animation-sound-color/units/14951-skewing">Creating Coding 2.0</a> course.</p>
+        <p>The menu on the right will bring you to the final result of each class.</p>
     </main>
     <script src="menu.js"></script>
 </body>

@@ -3,6 +3,7 @@ const canvasSketch = require('canvas-sketch');
 const settings = {
   dimensions: [ 1080, 1080 ],
   animate: true,
+  canvas: document.getElementById('interactive-curve'),
 };
 
 let elCanvas;
@@ -128,4 +129,9 @@ const onMouseMove = (event) => {
 const onMouseUp = () => {    
   window.removeEventListener('mousemove', onMouseMove);
   window.removeEventListener('mouseup', onMouseUp);
+}
+
+
+if (settings.canvas) {
+  canvasSketch(sketch, settings);
 }
