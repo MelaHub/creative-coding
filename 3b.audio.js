@@ -6,6 +6,7 @@ const random = require('canvas-sketch-util/random');
 const settings = {
   dimensions: [ 1080, 1080 ],
   animate: true,
+  canvas: document.getElementById('moving-circles'),
 };
 
 let audio;
@@ -125,5 +126,7 @@ const start = async () => {
   manager.pause();
 }
 
-start();
+if (settings.canvas) {
+  start();
+}
 

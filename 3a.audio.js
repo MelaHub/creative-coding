@@ -92,7 +92,7 @@ const addListeners = () => {
     minDb = analyserNode.minDecibels;
     maxDb = analyserNode.maxDecibels;
   });
-}o
+}
 
 const createAudio = () => {
   audio = document.createElement('audio');
