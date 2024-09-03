@@ -6,6 +6,7 @@ const random = require('canvas-sketch-util/random');
 const settings = {
   dimensions: [ 1080, 1080 ],
   animate: true,
+  canvas: document.getElementById('moving-circle'),
 };
 
 let audio;
@@ -91,11 +92,11 @@ const addListeners = () => {
     minDb = analyserNode.minDecibels;
     maxDb = analyserNode.maxDecibels;
   });
-}
+}o
 
 const createAudio = () => {
   audio = document.createElement('audio');
-  audio.src = 'audio/BayCityShimmy.mp3';
+  audio.src = 'https://cdn.artlist.io/artlist-watermarkmp3/396812_396811__ikoliks_-_Big_City_Lights_-_100920_-_EXT_-_X_-_2444.mp3';
 
   audioContext = new AudioContext();
   sourceNode = audioContext.createMediaElementSource(audio);
@@ -124,5 +125,7 @@ const start = async () => {
   manager.pause();
 }
 
-start();
+if (settings.canvas) {
+  start();
+}
 
