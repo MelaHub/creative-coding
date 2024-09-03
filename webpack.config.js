@@ -12,7 +12,7 @@ module.exports = {
   },
   output: {
     filename: '[name]',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'scripts')
   },
   mode: 'development'
 };
