@@ -8,6 +8,7 @@ const interpolate = require('color-interpolate');
 const settings = {
   dimensions: [ 1080, 1080 ],
   animate : true,
+  canvas: document.getElementById('particles-image'),
 };
 
 let elCanvas;
@@ -102,6 +103,7 @@ const loadImage = async (url) => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = url;
+    image.setAttribute('crossOrigin', '');
     image.onload = () => resolve(image);
     image.onerror = () => reject();
 
@@ -109,12 +111,12 @@ const loadImage = async (url) => {
 }
 
 const start = async () => {
-  img1 = await loadImage('images/girl.jpg');
-  img2 = await loadImage('images/flowers.jpg');
+  img1 = await loadImage('../images/girl.jpg');
+  img2 = await loadImage('../images/flowers.jpg');
   canvasSketch(sketch, settings);
 }
 
-start();
+if (settings.canvas) start();
 
 class Particle {
 

@@ -7,6 +7,7 @@ const colormap = require('colormap');
 const settings = {
   dimensions: [ 1080, 1080 ],
   animate : true,
+  canvas: document.getElementById('particles'),
 };
 
 let elCanvas;
@@ -60,7 +61,9 @@ const sketch = ({width, height, canvas}) => {
   };
 };
 
-canvasSketch(sketch, settings);
+if (settings.canvas) {
+  canvasSketch(sketch, settings);
+}
 
 class Particle {
 
