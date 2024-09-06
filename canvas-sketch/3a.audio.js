@@ -96,7 +96,8 @@ const addListeners = () => {
 
 const createAudio = () => {
   audio = document.createElement('audio');
-  audio.src = 'https://cdn.artlist.io/artlist-watermarkmp3/396812_396811__ikoliks_-_Big_City_Lights_-_100920_-_EXT_-_X_-_2444.mp3';
+  audio.src = 'https://archive.org/download/Louis_Armstrong_Tape_6_Variation_1928-1929/Louis_Armstrong_Tape_6_Variation_1928-1929_Side_A.wav';
+  audio.crossOrigin = "anonymous";
 
   audioContext = new AudioContext();
   sourceNode = audioContext.createMediaElementSource(audio);
@@ -125,7 +126,4 @@ const start = async () => {
   manager.pause();
 }
 
-if (settings.canvas) {
-  start();
-}
-
+start();
