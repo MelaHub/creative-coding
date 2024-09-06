@@ -12,7 +12,7 @@ module.exports = {
   },
   output: {
     filename: '[name]',
-    path: path.resolve(__dirname, 'public/assets/scripts')
+    path: path.resolve(__dirname, 'public/creative-coding/assets/scripts')
   },
   mode: 'development'
 };

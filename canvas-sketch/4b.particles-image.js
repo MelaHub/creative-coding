@@ -111,8 +111,8 @@ const loadImage = async (url) => {
 }
 
 const start = async () => {
-  img1 = await loadImage('/assets/girl.jpg');
-  img2 = await loadImage('/assets/flowers.jpg');
+  img1 = await loadImage('/creative-coding/assets/girl.jpg');
+  img2 = await loadImage('/creative-coding/assets/flowers.jpg');
   canvasSketch(sketch, settings);
 }
 
