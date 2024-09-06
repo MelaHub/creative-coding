@@ -111,12 +111,12 @@ const loadImage = async (url) => {
 }
 
 const start = async () => {
-  img1 = await loadImage('../images/girl.jpg');
-  img2 = await loadImage('../images/flowers.jpg');
+  img1 = await loadImage('/assets/girl.jpg');
+  img2 = await loadImage('/assets/flowers.jpg');
   canvasSketch(sketch, settings);
 }
 
-if (settings.canvas) start();
+start();
 
 class Particle {
 
