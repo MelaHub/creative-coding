@@ -1,17 +1,16 @@
 {
-  "name": "creative-coding",
-  "version": "1.0.0",
-  "description": "",
-  "main": "sketch-skew.js",
+  "name": "tested-transit",
+  "type": "module",
+  "version": "0.0.1",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "deploy": "gh-pages -d dist"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "astro": "^4.15.3",
     "canvas-sketch": "^0.7.7",
     "canvas-sketch-util": "^1.10.0",
     "color-interpolate": "^1.0.5",
