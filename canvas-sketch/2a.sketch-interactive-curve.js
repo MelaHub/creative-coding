@@ -131,7 +131,4 @@ const onMouseUp = () => {
   window.removeEventListener('mouseup', onMouseUp);
 }
 
-
-if (settings.canvas) {
-  canvasSketch(sketch, settings);
-}
+canvasSketch(sketch, settings);
