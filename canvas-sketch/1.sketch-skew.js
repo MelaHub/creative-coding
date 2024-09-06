@@ -190,6 +190,4 @@ const sketch = ({ context, width, height }) => {
   }
 };
 
-if (settings.canvas) {
-  canvasSketch(sketch, settings);
-}
+canvasSketch(sketch, settings);
