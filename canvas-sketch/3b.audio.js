@@ -6,7 +6,7 @@ const random = require('canvas-sketch-util/random');
 const settings = {
   dimensions: [ 1080, 1080 ],
   animate: true,
-  canvas: document.getElementById('moving-circles'),
+  canvas: document.getElementById('audio-visualization'),
 };
 
 let audio;
@@ -97,7 +97,8 @@ const addListeners = () => {
 
 const createAudio = () => {
   audio = document.createElement('audio');
-  audio.src = 'audio/BayCityShimmy.mp3';
+  audio.src = 'https://ia803209.us.archive.org/1/items/Duke_Ellington_Tape_X3_Anatomy_Of_A_Murder/Duke_Ellington_Tape_X3_Anatomy_Of_A_Murder_Side_A.mp3';
+  audio.crossOrigin = "anonymous";
 
   audioContext = new AudioContext();
   sourceNode = audioContext.createMediaElementSource(audio);
@@ -126,7 +127,4 @@ const start = async () => {
   manager.pause();
 }
 
-if (settings.canvas) {
-  start();
-}
-
+start();

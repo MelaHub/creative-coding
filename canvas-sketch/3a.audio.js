@@ -49,9 +49,6 @@ const sketch = () => {
 
     for (let i = 0; i < numCircles; i++) {  
       context.save();
-      /*context.lineWidth = lineWidths[i];
-      const radius = baseRadius + i * 50;
-      context.strokeStyle = 'black';*/
       
       for (let j = 0; j < numSlices; j++) {
         context.rotate(slice);
