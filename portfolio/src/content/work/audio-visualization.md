@@ -1,6 +1,6 @@
 ---
 title: Audio visualization
-publishDate: 2024-08-29 00:00:00
+publishDate: 2024-08-30 00:00:00
 img: /assets/audio-visualization.png
 img_alt: Skewed rectangles
 description: |

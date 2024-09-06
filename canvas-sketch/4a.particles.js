@@ -61,9 +61,7 @@ const sketch = ({width, height, canvas}) => {
   };
 };
 
-if (settings.canvas) {
-  canvasSketch(sketch, settings);
-}
+canvasSketch(sketch, settings);
 
 class Particle {
 
