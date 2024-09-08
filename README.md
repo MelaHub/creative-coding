@@ -7,5 +7,8 @@ To get creative with a single js file, run `canvas-sketch canvas-sketch/[js-file
 
 To bring back up an existing sketch, run `canvas-sketch canvas-sketch/[js-file-name-withou-extension]`.
 
+## Build js from canvas-sketch
+`canvas-sketch canvas-sketch/[js-filename]].js --build --dir public/assets/scripts`
+
 ## Run locally
-`npm run dev`
+`npm run dev` brings up astro
