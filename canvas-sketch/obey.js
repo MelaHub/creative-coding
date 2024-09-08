@@ -7,13 +7,13 @@ const settings = {
 };
 
 let elCanvas;
-let cursor;
+let cursor = { x: 9999, y: 9999 };
 
 const sketch = ({canvas, width, height}) => {
 
-  const baseRadius = 100;
+  const baseRadius = 50;
   const numCircles = 10;
-  const gapCircle = 40;
+  const gapCircle = 30;
   elCanvas = canvas;
   canvas.addEventListener('mousedown', onMouseDown);
 
@@ -37,25 +37,29 @@ const sketch = ({canvas, width, height}) => {
 class Circle {
   constructor(radius, centerX, centerY) {
     this.radius = radius;
-    this.centerX = centerX;
-    this.centerY = centerY;
+    this.center = { x: centerX, y: centerY };
+    this.point = { x: cursor.x, y: cursor.y };
+    this.maxDistance = 200;
   }
 
   update() { 
-    this.dx = cursor.x - this.centerX;
-    this.dy = cursor.y - this.centerY;
-    this.distance = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
-    this.cursorInside = this.distance < this.radius;
+    this.distanceCoord = { x: cursor.x - this.center.x, y: cursor.y - this.center.y };
+    this.distance = Math.sqrt(this.distanceCoord.x * this.distanceCoord.x + this.distanceCoord.y * this.distanceCoord.y);
+    this.isCursorInside = this.distance < this.radius;
+    if (this.distance > this.maxDistance + this.radius) {
+      this.point = { x: this.center.x - (this.maxDistance + this.radius) * (this.center.x - cursor.x) / this.distance, y: this.center.y - (this.maxDistance + this.radius) * (this.center.y - cursor.y) / this.distance };
+    } else {
+      this.point = { x: cursor.x, y: cursor.y };
+    }
   }
 
   draw(context) {
     context.save();
-    // context.translate(this.centerX, this.centerY);
 
     context.strokeStyle = 'black';
     context.lineWidth = 7;
 
-    if (this.cursorInside) {
+    if (this.isCursorInside) {
       this.drawInsideCircle(context);
     } else {
       this.drawOutsideCircle(context);
@@ -66,29 +70,27 @@ class Circle {
 
   drawInsideCircle(context) {
     context.beginPath();
-    context.arc(this.centerX, this.centerY, this.radius, 0, Math.PI * 2);
+    context.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2);
     context.stroke();
   }
 
   drawOutsideCircle(context) {
     const a = this.radius * this.radius / this.distance;
-    const x = this.centerX + a * this.dx / this.distance;
-    const y = this.centerY + a * this.dy / this.distance;
+    const x = this.center.x + a * this.distanceCoord.x / this.distance;
+    const y = this.center.y + a * this.distanceCoord.y / this.distance;
     const p = Math.sqrt(this.radius * this.radius - a * a);
-    const x1 = x - p * this.dy / this.distance;
-    const y1 = y + p * this.dx / this.distance;
-    const x2 = x + p * this.dy / this.distance;
-    const y2 = y - p * this.dx / this.distance;
+    const tang1 = { x: x - p * this.distanceCoord.y / this.distance, y: y + p * this.distanceCoord.x / this.distance };
+    const tang2 = { x: x + p * this.distanceCoord.y / this.distance, y: y - p * this.distanceCoord.x / this.distance };
     context.strokeStyle = 'black';
     context.beginPath();
-    context.moveTo(x1, y1);
-    context.lineTo(cursor.x, cursor.y);
-    context.lineTo(x2, y2);
+    context.moveTo(tang1.x, tang1.y);
+    context.lineTo(this.point.x, this.point.y);
+    context.lineTo(tang2.x, tang2.y);
     context.stroke();
     context.beginPath();
-    let angle1 = Math.atan2(y1 - this.centerY, x1 - this.centerX);
-    let angle2 = Math.atan2(y2 - this.centerY, x2 - this.centerX);
-    context.arc(this.centerX, this.centerY, this.radius, angle1, angle2);
+    let angle1 = Math.atan2(tang1.y - this.center.y, tang1.x - this.center.x);
+    let angle2 = Math.atan2(tang2.y - this.center.y, tang2.x - this.center.x);
+    context.arc(this.center.x, this.center.y, this.radius, angle1, angle2);
     context.stroke();
   }
 }
