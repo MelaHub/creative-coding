@@ -1,4 +1,6 @@
 const canvasSketch = require('canvas-sketch');
+const random = require('canvas-sketch-util/random');
+const risoColors = require("riso-colors");
 
 const settings = {
   dimensions: [ 1080, 1080 ],
@@ -17,15 +19,21 @@ const sketch = ({canvas, width, height}) => {
   elCanvas = canvas;
   canvas.addEventListener('mousedown', onMouseDown);
 
+  let bgColor = random.pick(risoColors).hex;
+  let lineColor = random.pick(risoColors).hex;
+  let evenColor = random.pick(risoColors).hex;
+  let oddColor = random.pick(risoColors).hex;
+
+  console.log(bgColor, lineColor, evenColor, oddColor);
   const circles = [];
-  for (let i = 0; i < numCircles; i++) {
+  for (let i = numCircles - 1; i >= 0; i--) {
     const radius = baseRadius + i * gapCircle;
-    circles.push(new Circle(radius, width/2, height/2));
+    circles.push(new Circle(radius, width/2, height/2, lineColor, i % 2 === 0 ? evenColor : oddColor));
   }
   cursor = { x: width/2, y: height/2 };
 
   return ({ context, width, height }) => {
-    context.fillStyle = 'white';
+    context.fillStyle = bgColor;
     context.fillRect(0, 0, width, height);
 
     circles.forEach(circle => {
@@ -35,11 +43,13 @@ const sketch = ({canvas, width, height}) => {
 };
 
 class Circle {
-  constructor(radius, centerX, centerY) {
+  constructor(radius, centerX, centerY, lineColor, fillColor) {
     this.radius = radius;
     this.center = { x: centerX, y: centerY };
     this.point = { x: cursor.x, y: cursor.y };
     this.maxDistance = 200;
+    this.lineColor = lineColor;
+    this.fillColor = fillColor;
   }
 
   update() { 
@@ -56,7 +66,7 @@ class Circle {
   draw(context) {
     context.save();
 
-    context.strokeStyle = 'black';
+    context.strokeStyle = this.lineColor;
     context.lineWidth = 7;
 
     if (this.isCursorInside) {
@@ -70,7 +80,9 @@ class Circle {
 
   drawInsideCircle(context) {
     context.beginPath();
+    context.fillStyle = this.fillColor;
     context.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2);
+    context.fill();
     context.stroke();
   }
 
@@ -81,16 +93,18 @@ class Circle {
     const p = Math.sqrt(this.radius * this.radius - a * a);
     const tang1 = { x: x - p * this.distanceCoord.y / this.distance, y: y + p * this.distanceCoord.x / this.distance };
     const tang2 = { x: x + p * this.distanceCoord.y / this.distance, y: y - p * this.distanceCoord.x / this.distance };
-    context.strokeStyle = 'black';
     context.beginPath();
+    context.fillStyle = this.fillColor;
     context.moveTo(tang1.x, tang1.y);
     context.lineTo(this.point.x, this.point.y);
     context.lineTo(tang2.x, tang2.y);
+    context.fill();
     context.stroke();
     context.beginPath();
     let angle1 = Math.atan2(tang1.y - this.center.y, tang1.x - this.center.x);
     let angle2 = Math.atan2(tang2.y - this.center.y, tang2.x - this.center.x);
     context.arc(this.center.x, this.center.y, this.radius, angle1, angle2);
+    context.fill();
     context.stroke();
   }
 }
