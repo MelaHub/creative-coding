@@ -5,7 +5,7 @@ const risoColors = require("riso-colors");
 const settings = {
   dimensions: [ 1080, 1080 ],
   animate: true,
-  canvas: document.getElementById('obey'),
+  canvas: document.getElementById('earth-crisis'),
 };
 
 class PointFromCenter {
