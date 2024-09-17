@@ -26,22 +26,88 @@ class Block {
     this.strokeStyle = 'lightgray';
   }
 
+  otherNodeIsOnTheLeft(that) {
+    return that && 
+      that.x == this.x - 1 && 
+      that.y == this.y;
+  }
+
+  drawLeftSide(context) {
+    if (!this.otherNodeIsOnTheLeft(this.previous) && !this.otherNodeIsOnTheLeft(this.next)) { 
+      context.strokeStyle = this.strokeStyle;
+    } else {
+      context.strokeStyle = this.snakeColor;
+    }
+    context.moveTo(this.x * this.size, this.y * this.size);
+    context.lineTo(this.x * this.size, this.y * this.size + this.size);
+    context.stroke();
+  }
+
+  otherNodeIsOnTheRight(that) {
+    return that && 
+      that.x == this.x + 1 && 
+      that.y == this.y;
+  }
+
+  drawRightSide(context) {
+    if (!this.otherNodeIsOnTheRight(this.previous) && !this.otherNodeIsOnTheRight(this.next)) { 
+      context.strokeStyle = this.strokeStyle;
+    } else {
+      context.strokeStyle = this.snakeColor;
+    }
+    context.moveTo(this.x * this.size + this.size, this.y * this.size);
+    context.lineTo(this.x * this.size + this.size, this.y * this.size + this.size);
+    context.stroke();
+  }
+
+  otherNodeIsAbove(that) {
+    return that && 
+      that.x == this.x && 
+      that.y == this.y - 1;
+  }
+
+  drawUpperSide(context) {
+    if (!this.otherNodeIsAbove(this.previous) && !this.otherNodeIsAbove(this.next)) { 
+      context.strokeStyle = this.strokeStyle;
+    } else {
+      context.strokeStyle = this.snakeColor;
+    }
+    context.moveTo(this.x * this.size, this.y * this.size);
+    context.lineTo(this.x * this.size + this.size, this.y * this.size);
+    context.stroke();
+  }
+
+  otherNodeIsBelow(that) {
+    return that && 
+      that.x == this.x && 
+      that.y == this.y + 1;
+  }
+
+  drawBtoomoSide(context) {
+    if (!this.otherNodeIsBelow(this.previous) && !this.otherNodeIsBelow(this.next)) { 
+      context.strokeStyle = this.strokeStyle;
+    } else {
+      context.strokeStyle = this.snakeColor;
+    }
+    context.moveTo(this.x * this.size, this.y * this.size + this.size);
+    context.lineTo(this.x * this.size + this.size, this.y * this.size + this.size);
+    context.stroke();
+  }
+
+
   draw(context) {
     context.lineWidth = blockLineWidth;
     context.strokeStyle = this.strokeStyle;
     context.fillStyle = this.partOfSnake ? this.snakeColor : this.freeColor;
     if (this.partOfSnake) {
       context.beginPath();
-      context.moveTo(this.x * this.size, this.y * this.size);
-      context.lineTo(this.x * this.size + this.size, this.y * this.size);
-      context.lineTo(this.x * this.size + this.size, this.y * this.size + this.size);
-      context.lineTo(this.x * this.size, this.y * this.size + this.size);
-      context.closePath();
+      this.drawLeftSide(context);
+      this.drawRightSide(context);
+      this.drawUpperSide(context);
+      this.drawBtoomoSide(context);
       context.fill();
       context.stroke();
     }
-    context.moveTo(this.x * this.size, this.y * this.size);
-    
   }
 }
 
@@ -65,8 +131,12 @@ const sketch = ({context, width, height}) => {
   return ({ context, width, height, frame }) => {
     context.translate(width / 2 - blocksPerSquareSide * blockSize / 2, height / 2 - blocksPerSquareSide * blockSize / 2);
     updateSnakes(context);
-    console.log(frame);
-    blocks.forEach(block => block.draw(context));
+    context.save();
+    blocks.forEach(block => {
+      console.log(block.x, block.y);
+      block.draw(context)
+    });
+    context.restore();
   };
 };
 
