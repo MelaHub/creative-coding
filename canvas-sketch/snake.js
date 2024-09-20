@@ -36,6 +36,10 @@ class Square {
     this.size = size;
     this.blocksPerSquareSide = blocksPerSquareSide;
     this.blocks = [];
+    this.used = false;
+    this.movingFrom = null;
+    this.movingNext = null;
+    this.currentBlock = null;
   }
 
   init(context) {
@@ -44,15 +48,24 @@ class Square {
 
     for (let i = 0; i < this.blocksPerSquareSide; i++) {
       for (let j = 0; j < this.blocksPerSquareSide; j++) {
-        let block = new Block(i * this.size / this.blocksPerSquareSide, j * this.size / this.blocksPerSquareSide, this.size / this.blocksPerSquareSide);
+        let block = new Block(this.x + i * this.size / this.blocksPerSquareSide, this.y + j * this.size / this.blocksPerSquareSide, this.size / this.blocksPerSquareSide);
         this.blocks.push(block);
-        block.draw(context);
       }
     }
 
     context.strokeStyle = 'black';
     context.strokeRect(0, 0, this.size, this.size);
     context.restore();
+  }
+
+  update(context) {
+    if (!this.movingFrom) {
+      let availableBlocks = this.blocks.filter(block => !block.used);
+      this.movingFrom = random.pick(availableBlocks);
+      this.movingFrom.used = true;
+      this.currentBlock = new Block(this.movingFrom.x, this.movingFrom.y, this.movingFrom.size);
+    }
+    this.currentBlock.draw(context);
   }
 }
 
@@ -74,6 +87,9 @@ const sketch = ({context, width, height}) => {
 
   return ({ context }) => {
     console.log('drawing');
+    squares.forEach(square => {
+      square.update(context);
+    });
   };
 }
 
