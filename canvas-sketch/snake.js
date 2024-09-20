@@ -9,23 +9,47 @@ const settings = {
 
 const squaresRows = 2;
 const squaresCols = 1;
-const blocksPerSquareSide = 9;
-const blockSize = 105;
+const blocksPerSquareSide = 10;
 const blockLineWidth = 10;
 
 let squares = [];
 
-class Square {
+class Block {
+
   constructor(x, y, size) {
     this.x = x;
     this.y = y;
     this.size = size;
   }
 
+  draw(context) {
+    context.lineWidth = blockLineWidth;
+    context.strokeStyle = 'gray';
+    context.strokeRect(this.x, this.y, this.size, this.size);
+  }
+}
+
+class Square {
+  constructor(x, y, size, blocksPerSquareSide) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.blocksPerSquareSide = blocksPerSquareSide;
+    this.blocks = [];
+  }
+
   init(context) {
     context.save();
     context.translate(this.x, this.y); 
-    context.fillStyle = 'white';
+
+    for (let i = 0; i < this.blocksPerSquareSide; i++) {
+      for (let j = 0; j < this.blocksPerSquareSide; j++) {
+        let block = new Block(i * this.size / this.blocksPerSquareSide, j * this.size / this.blocksPerSquareSide, this.size / this.blocksPerSquareSide);
+        this.blocks.push(block);
+        block.draw(context);
+      }
+    }
+
     context.strokeStyle = 'black';
     context.strokeRect(0, 0, this.size, this.size);
     context.restore();
@@ -38,9 +62,11 @@ const sketch = ({context, width, height}) => {
   const gridX = (width - squareSideSize * squaresCols) / 2;
   const gridY = (height - squareSideSize * squaresRows) / 2;
 
+  const blockSize = squareSideSize / blocksPerSquareSide;
+
   for (let i = 0; i < squaresRows; i++) {
     for (let j = 0; j < squaresCols; j++) {
-      const square = new Square(j * squareSideSize + gridX, i * squareSideSize + gridY, squareSideSize);
+      const square = new Square(j * squareSideSize + gridX, i * squareSideSize + gridY, squareSideSize, blocksPerSquareSide);
       squares.push(square);
       square.init(context);
     }
