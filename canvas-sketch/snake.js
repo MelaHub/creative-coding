@@ -7,19 +7,22 @@ const settings = {
   // fps: 1,
 };
 
-const squaresRows = 2;
+const squaresRows = 1;
 const squaresCols = 1;
 const blocksPerSquareSide = 10;
 const blockLineWidth = 10;
+const speed = 1;
 
 let squares = [];
 
 class Block {
 
-  constructor(x, y, size) {
+  constructor(x, y, size, idx) {
     this.x = x;
     this.y = y;
     this.size = size;
+    this.idx = idx;
+    this.used = false;
   }
 
   draw(context) {
@@ -38,17 +41,21 @@ class Square {
     this.blocks = [];
     this.used = false;
     this.movingFrom = null;
-    this.movingNext = null;
+    this.movingTo = null;
     this.currentBlock = null;
+    this.currDir = null;
+    this.blockSize = this.size / this.blocksPerSquareSide
   }
 
   init(context) {
     context.save();
     context.translate(this.x, this.y); 
 
+    ;
+
     for (let i = 0; i < this.blocksPerSquareSide; i++) {
       for (let j = 0; j < this.blocksPerSquareSide; j++) {
-        let block = new Block(this.x + i * this.size / this.blocksPerSquareSide, this.y + j * this.size / this.blocksPerSquareSide, this.size / this.blocksPerSquareSide);
+        let block = new Block(i * this.blockSize, j * this.blockSize, this.blockSize, i * this.blocksPerSquareSide + j);
         this.blocks.push(block);
       }
     }
@@ -58,14 +65,71 @@ class Square {
     context.restore();
   }
 
+  pickNextBlock() {
+    let availableDirections = ['left', 'right', 'up', 'down'];
+    let isNextInsideSquare = false;
+    let nextBlockIdx = null;
+
+    while (availableDirections.length > 0 && !this.movingTo) {
+      const nextDir = random.pick(availableDirections);
+      switch (nextDir) {
+        case 'left':
+          isNextInsideSquare = this.movingFrom.x > 0;
+          nextBlockIdx = this.movingFrom.idx - 1;
+          break;
+        case 'right':
+          isNextInsideSquare = this.movingFrom.x < this.blocksPerSquareSide * this.blockSize - this.blockSize;
+          nextBlockIdx = this.movingFrom.idx + 1;
+          break;
+        case 'up':
+          isNextInsideSquare = this.movingFrom.y > 0;
+          nextBlockIdx = this.movingFrom.idx - this.blocksPerSquareSide;
+          break;
+        case 'down':
+          isNextInsideSquare = this.movingFrom.y < this.blocksPerSquareSide * this.blockSize - this.blockSize;
+          nextBlockIdx = this.movingFrom.idx + this.blocksPerSquareSide;
+          break;
+      }
+      if (isNextInsideSquare) {
+        const maybeNextBlock = this.blocks[nextBlockIdx];
+        if (maybeNextBlock && !maybeNextBlock.used) {
+          this.movingTo = maybeNextBlock;
+          this.currDir = nextDir;
+        }
+      }
+      availableDirections = availableDirections.filter(dir => dir !== nextDir);
+    }
+
+  }
+
   update(context) {
+    context.save();
+    context.translate(this.x, this.y); 
+
     if (!this.movingFrom) {
       let availableBlocks = this.blocks.filter(block => !block.used);
       this.movingFrom = random.pick(availableBlocks);
       this.movingFrom.used = true;
       this.currentBlock = new Block(this.movingFrom.x, this.movingFrom.y, this.movingFrom.size);
+      this.movingTo = this.pickNextBlock();
+    } else {
+      switch (this.currDir) {
+        case 'left':
+          this.currentBlock = new Block(this.currentBlock.x - speed, this.currentBlock.y, this.currentBlock.size);
+          break;
+        case 'right':
+          this.currentBlock = new Block(this.currentBlock.x + speed, this.currentBlock.y, this.currentBlock.size);
+          break;
+        case 'up':
+          this.currentBlock = new Block(this.currentBlock.x, this.currentBlock.y - speed, this.currentBlock.size);
+          break;
+        case 'down':
+          this.currentBlock = new Block(this.currentBlock.x, this.currentBlock.y + speed, this.currentBlock.size);
+          break;
+      }
     }
     this.currentBlock.draw(context);
+    context.restore();
   }
 }
 
@@ -88,7 +152,9 @@ const sketch = ({context, width, height}) => {
   return ({ context }) => {
     console.log('drawing');
     squares.forEach(square => {
-      square.update(context);
+      for (let i = 0; i < 10; i++) {
+        square.update(context);
+      }
     });
   };
 }
