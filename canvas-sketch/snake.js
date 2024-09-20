@@ -9,9 +9,9 @@ const settings = {
 
 const squaresRows = 1;
 const squaresCols = 1;
-const blocksPerSquareSide = 10;
+const blocksPerSquareSide = 3;
 const blockLineWidth = 10;
-const speed = 1;
+const speed = 350;
 
 let squares = [];
 
@@ -28,7 +28,7 @@ class Block {
   draw(context) {
     context.lineWidth = blockLineWidth;
     context.strokeStyle = 'gray';
-    context.strokeRect(this.x, this.y, this.size, this.size);
+    context.strokeRect(this.x * this.size, this.y * this.size, this.size, this.size);
   }
 }
 
@@ -44,18 +44,16 @@ class Square {
     this.movingTo = null;
     this.currentBlock = null;
     this.currDir = null;
-    this.blockSize = this.size / this.blocksPerSquareSide
+    this.blockSize = this.size / this.blocksPerSquareSide;
   }
 
   init(context) {
     context.save();
     context.translate(this.x, this.y); 
 
-    ;
-
     for (let i = 0; i < this.blocksPerSquareSide; i++) {
       for (let j = 0; j < this.blocksPerSquareSide; j++) {
-        let block = new Block(i * this.blockSize, j * this.blockSize, this.blockSize, i * this.blocksPerSquareSide + j);
+        let block = new Block(j, i, this.blockSize, i * this.blocksPerSquareSide + j);
         this.blocks.push(block);
       }
     }
@@ -71,16 +69,8 @@ class Square {
     let nextBlockIdx = null;
 
     while (availableDirections.length > 0 && !this.movingTo) {
-      const nextDir = random.pick(availableDirections);
+      let nextDir = random.pick(availableDirections);
       switch (nextDir) {
-        case 'left':
-          isNextInsideSquare = this.movingFrom.x > 0;
-          nextBlockIdx = this.movingFrom.idx - 1;
-          break;
-        case 'right':
-          isNextInsideSquare = this.movingFrom.x < this.blocksPerSquareSide * this.blockSize - this.blockSize;
-          nextBlockIdx = this.movingFrom.idx + 1;
-          break;
         case 'up':
           isNextInsideSquare = this.movingFrom.y > 0;
           nextBlockIdx = this.movingFrom.idx - this.blocksPerSquareSide;
@@ -89,6 +79,14 @@ class Square {
           isNextInsideSquare = this.movingFrom.y < this.blocksPerSquareSide * this.blockSize - this.blockSize;
           nextBlockIdx = this.movingFrom.idx + this.blocksPerSquareSide;
           break;
+        case 'left':
+          isNextInsideSquare = this.movingFrom.x > 0;
+          nextBlockIdx = this.movingFrom.idx - 1;
+          break;
+        case 'right':
+          isNextInsideSquare = this.movingFrom.x < this.blocksPerSquareSide * this.blockSize - this.blockSize;
+          nextBlockIdx = this.movingFrom.idx + 1;
+          break;       
       }
       if (isNextInsideSquare) {
         const maybeNextBlock = this.blocks[nextBlockIdx];
@@ -110,8 +108,10 @@ class Square {
       let availableBlocks = this.blocks.filter(block => !block.used);
       this.movingFrom = random.pick(availableBlocks);
       this.movingFrom.used = true;
-      this.currentBlock = new Block(this.movingFrom.x, this.movingFrom.y, this.movingFrom.size);
-      this.movingTo = this.pickNextBlock();
+    }
+    if (!this.movingTo) {
+      this.currentBlock = new Block(this.movingFrom.x, this.movingFrom.y, this.movingFrom.size, this.movingFrom.idx);
+      this.pickNextBlock();
     } else {
       switch (this.currDir) {
         case 'left':
@@ -129,6 +129,11 @@ class Square {
       }
     }
     this.currentBlock.draw(context);
+    if (this.movingTo && Math.abs(this.currentBlock.x - this.movingTo.x) <= speed && Math.abs(this.currentBlock.y - this.movingTo.y) <= speed) {
+      this.movingFrom = new Block(this.movingTo.x, this.movingTo.y, this.movingTo.size, this.movingTo.idx);
+      this.movingTo.used = true;
+      this.movingTo = null;
+    }
     context.restore();
   }
 }
@@ -141,9 +146,9 @@ const sketch = ({context, width, height}) => {
 
   const blockSize = squareSideSize / blocksPerSquareSide;
 
-  for (let i = 0; i < squaresRows; i++) {
-    for (let j = 0; j < squaresCols; j++) {
-      const square = new Square(j * squareSideSize + gridX, i * squareSideSize + gridY, squareSideSize, blocksPerSquareSide);
+  for (let i = 0; i < squaresCols; i++) {
+    for (let j = 0; j < squaresRows; j++) {
+      const square = new Square(i * squareSideSize + gridX, j * squareSideSize + gridY, squareSideSize, blocksPerSquareSide);
       squares.push(square);
       square.init(context);
     }
