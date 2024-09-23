@@ -99,7 +99,7 @@ class Square {
           nextBlockIdx = this.movingFrom.idx - this.blocksPerSquareSide;
           break;
         case 'down':
-          isNextInsideSquare = this.movingFrom.y < this.blocksPerSquareSide * this.blockSize - this.blockSize;
+          isNextInsideSquare = this.movingFrom.y < this.blocksPerSquareSide - 1;
           nextBlockIdx = this.movingFrom.idx + this.blocksPerSquareSide;
           break;
         case 'left':
@@ -107,7 +107,7 @@ class Square {
           nextBlockIdx = this.movingFrom.idx - 1;
           break;
         case 'right':
-          isNextInsideSquare = this.movingFrom.x < this.blocksPerSquareSide * this.blockSize - this.blockSize;
+          isNextInsideSquare = this.movingFrom.x < this.blocksPerSquareSide - 1;
           nextBlockIdx = this.movingFrom.idx + 1;
           break;       
       }
