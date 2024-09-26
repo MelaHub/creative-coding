@@ -3,15 +3,15 @@ const random = require('canvas-sketch-util/random');
 
 const settings = {
   dimensions: [ 1080, 1080 ],
-  // animate: true,
+  animate: true,
   // fps: 1,
 };
 
-const squaresRows = 1;
-const squaresCols = 1;
-const blocksPerSquareSide = 3;
+const squaresRows = 5;
+const squaresCols = 5;
+const blocksPerSquareSide = 5;
 const blockLineWidth = 10;
-const speed = 100;
+const speed = 1;
 
 let squares = [];
 
@@ -30,6 +30,9 @@ class Block {
     context.lineWidth = blockLineWidth;
     context.strokeStyle = 'gray';
     context.fillStyle = 'green';
+    if (!this.arrivingFromDir) {
+      context.fillStyle = 'blue';
+    } 
     context.fillRect(this.x * this.size, this.y * this.size, this.size, this.size);    
     context.strokeRect(this.x * this.size, this.y * this.size, this.size, this.size);
     context.strokeStyle = 'green';
@@ -155,7 +158,9 @@ class Square {
       }
     }
     this.currentBlock.draw(context);
-    console.log("Moving from", this.movingFrom.x, this.movingFrom.y, "to", this.movingTo.x, this.movingTo.y, "via", this.currentBlock.x, this.currentBlock.y, "dir", this.currDir);
+    if (this.movingTo) {
+      console.log("Moving from", this.movingFrom.x, this.movingFrom.y, "to", this.movingTo.x, this.movingTo.y, "via", this.currentBlock.x, this.currentBlock.y, "dir", this.currDir);
+    }
     if (this.movingTo && Math.abs(this.currentBlock.x - this.movingTo.x) <= speed && Math.abs(this.currentBlock.y - this.movingTo.y) <= speed) {
       this.movingFrom = new Block(this.movingTo.x, this.movingTo.y, this.movingTo.size, this.movingTo.idx, this.movingTo.arrivingFromDir);
       this.movingTo.used = true;
@@ -183,9 +188,7 @@ const sketch = ({context, width, height}) => {
 
   return ({ context }) => {
     squares.forEach(square => {
-      for (let i = 0; i < 10; i++) {
         square.update(context);
-      }
     });
   };
 }
