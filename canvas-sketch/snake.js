@@ -11,19 +11,19 @@ const squaresRows = 1;
 const squaresCols = 1;
 const blocksPerSquareSide = 3;
 const blockLineWidth = 10;
-const speed = 350;
+const speed = 100;
 
 let squares = [];
 
 class Block {
 
-  constructor(x, y, size, idx, dir) {
+  constructor(x, y, size, idx, arrivingFromDir) {
     this.x = x;
     this.y = y;
     this.size = size;
     this.idx = idx;
     this.used = false;
-    this.dir = dir;
+    this.arrivingFromDir = arrivingFromDir;
   }
 
   draw(context) {
@@ -33,20 +33,20 @@ class Block {
     context.fillRect(this.x * this.size, this.y * this.size, this.size, this.size);    
     context.strokeRect(this.x * this.size, this.y * this.size, this.size, this.size);
     context.strokeStyle = 'green';
-    switch(this.dir) {
-      case 'left': 
+    switch(this.arrivingFromDir) {
+      case 'right': 
         context.moveTo(this.x * this.size, this.y * this.size);
         context.lineTo(this.x * this.size, this.y * this.size + this.size);
         break;
-      case 'right': 
+      case 'left': 
         context.moveTo(this.x * this.size + this.size, this.y * this.size);
         context.lineTo(this.x * this.size + this.size, this.y * this.size + this.size);
         break;
-      case 'up':
+      case 'down':
         context.moveTo(this.x * this.size, this.y * this.size);
         context.lineTo(this.x * this.size + this.size, this.y * this.size);
         break;
-      case 'down':
+      case 'up':
         context.moveTo(this.x * this.size, this.y * this.size + this.size);
         context.lineTo(this.x * this.size + this.size, this.y * this.size + this.size);
         break;
@@ -68,6 +68,7 @@ class Square {
     this.currentBlock = null;
     this.currDir = null;
     this.blockSize = this.size / this.blocksPerSquareSide;
+    
   }
 
   init(context) {
@@ -114,8 +115,8 @@ class Square {
       if (isNextInsideSquare) {
         const maybeNextBlock = this.blocks[nextBlockIdx];
         if (maybeNextBlock && !maybeNextBlock.used) {
-          this.movingFrom.dir = nextDir;
           this.movingTo = maybeNextBlock;
+          this.movingTo.arrivingFromDir = nextDir;
           this.currDir = nextDir;
         }
       }
@@ -132,30 +133,31 @@ class Square {
       let availableBlocks = this.blocks.filter(block => !block.used);
       this.movingFrom = random.pick(availableBlocks);
       this.movingFrom.used = true;
+      this.movingFrom.isHead = true;
     }
     if (!this.movingTo) {
       this.pickNextBlock();
-      this.currentBlock = new Block(this.movingFrom.x, this.movingFrom.y, this.movingFrom.size, this.movingFrom.idx, this.movingFrom.dir);
+      this.currentBlock = new Block(this.movingFrom.x, this.movingFrom.y, this.movingFrom.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir, this.movingFrom.isHead);
     } else {
       switch (this.currDir) {
         case 'left':
-          this.currentBlock = new Block(this.currentBlock.x - speed, this.currentBlock.y, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.dir);
+          this.currentBlock = new Block(this.currentBlock.x - speed, this.currentBlock.y, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
           break;
         case 'right':
-          this.currentBlock = new Block(this.currentBlock.x + speed, this.currentBlock.y, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.dir);
+          this.currentBlock = new Block(this.currentBlock.x + speed, this.currentBlock.y, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
           break;
         case 'up':
-          this.currentBlock = new Block(this.currentBlock.x, this.currentBlock.y - speed, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.dir);
+          this.currentBlock = new Block(this.currentBlock.x, this.currentBlock.y - speed, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
           break;
         case 'down':
-          this.currentBlock = new Block(this.currentBlock.x, this.currentBlock.y + speed, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.dir);
+          this.currentBlock = new Block(this.currentBlock.x, this.currentBlock.y + speed, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
           break;
       }
     }
-    console.log("Moving from", this.movingFrom.x, this.movingFrom.y, "to", this.movingTo.x, this.movingTo.y, "via", this.currentBlock.x, this.currentBlock.y, "dir", this.currDir);
     this.currentBlock.draw(context);
+    console.log("Moving from", this.movingFrom.x, this.movingFrom.y, "to", this.movingTo.x, this.movingTo.y, "via", this.currentBlock.x, this.currentBlock.y, "dir", this.currDir);
     if (this.movingTo && Math.abs(this.currentBlock.x - this.movingTo.x) <= speed && Math.abs(this.currentBlock.y - this.movingTo.y) <= speed) {
-      this.movingFrom = new Block(this.movingTo.x, this.movingTo.y, this.movingTo.size, this.movingTo.idx);
+      this.movingFrom = new Block(this.movingTo.x, this.movingTo.y, this.movingTo.size, this.movingTo.idx, this.movingTo.arrivingFromDir);
       this.movingTo.used = true;
       this.movingTo = null;
     }
