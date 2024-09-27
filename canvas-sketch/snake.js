@@ -134,49 +134,55 @@ class Square {
 
   update(context) {
     context.save();
-    context.translate(this.x, this.y); 
+    context.translate(this.x, this.y);
 
     if (!this.movingFrom) {
       let availableBlocks = this.blocks.filter(block => !block.used);
       if (availableBlocks.length > 0) {
         this.movingFrom = random.pick(availableBlocks);
-        let color = random.pick(colors);
         this.movingFrom.used = true;
-        this.movingFrom.fillColor = color;
+        this.movingFrom.fillColor = random.pick(colors);
       }
     }
+
     if (this.movingFrom) {
       if (!this.movingTo) {
         this.pickNextBlock();
         this.currentBlock = new Block(this.movingFrom.x, this.movingFrom.y, this.movingFrom.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir, this.movingFrom.fillColor);
       } else {
-        switch (this.currDir) {
-          case 'left':
-            this.currentBlock = new Block(this.currentBlock.x - speed, this.currentBlock.y, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
-            break;
-          case 'right':
-            this.currentBlock = new Block(this.currentBlock.x + speed, this.currentBlock.y, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
-            break;
-          case 'up':
-            this.currentBlock = new Block(this.currentBlock.x, this.currentBlock.y - speed, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
-            break;
-          case 'down':
-            this.currentBlock = new Block(this.currentBlock.x, this.currentBlock.y + speed, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
-            break;
-        }
+        const updateBlockPosition = (direction, speed, currentBlock, movingFrom) => {
+          switch (direction) {
+            case 'left':
+              return new Block(currentBlock.x - speed, currentBlock.y, currentBlock.size, movingFrom.idx, movingFrom.arrivingFromDir);
+            case 'right':
+              return new Block(currentBlock.x + speed, currentBlock.y, currentBlock.size, movingFrom.idx, movingFrom.arrivingFromDir);
+            case 'up':
+              return new Block(currentBlock.x, currentBlock.y - speed, currentBlock.size, movingFrom.idx, movingFrom.arrivingFromDir);
+            case 'down':
+              return new Block(currentBlock.x, currentBlock.y + speed, currentBlock.size, movingFrom.idx, movingFrom.arrivingFromDir);
+            default:
+              return currentBlock;
+          }
+        };
+
+        this.currentBlock = updateBlockPosition(this.currDir, speed, this.currentBlock, this.movingFrom);
       }
+
       this.currentBlock.draw(context);
+
       if (this.movingTo) {
         console.log("Moving from", this.movingFrom.x, this.movingFrom.y, "to", this.movingTo.x, this.movingTo.y, "via", this.currentBlock.x, this.currentBlock.y, "dir", this.currDir);
       } else {
         this.movingFrom = null;
       }
+
       if (this.movingTo && Math.abs(this.currentBlock.x - this.movingTo.x) <= speed && Math.abs(this.currentBlock.y - this.movingTo.y) <= speed) {
         this.movingFrom = new Block(this.movingTo.x, this.movingTo.y, this.movingTo.size, this.movingTo.idx, this.movingTo.arrivingFromDir, this.movingFrom.fillColor);
         this.movingTo.used = true;
         this.movingTo = null;
       }
     }
+
     context.restore();
   }
 }
