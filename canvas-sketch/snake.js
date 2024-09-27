@@ -5,6 +5,7 @@ const colormap = require('colormap');
 const settings = {
   dimensions: [ 1080, 1080 ],
   animate: true,
+  canvas: document.getElementById('snake'),
 };
 
 const squaresRows = 5;
