@@ -150,22 +150,23 @@ class Square {
         this.pickNextBlock();
         this.currentBlock = new Block(this.movingFrom.x, this.movingFrom.y, this.movingFrom.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir, this.movingFrom.fillColor);
       } else {
-        const updateBlockPosition = (direction, speed, currentBlock, movingFrom) => {
-          switch (direction) {
-            case 'left':
-              return new Block(currentBlock.x - speed, currentBlock.y, currentBlock.size, movingFrom.idx, movingFrom.arrivingFromDir);
-            case 'right':
-              return new Block(currentBlock.x + speed, currentBlock.y, currentBlock.size, movingFrom.idx, movingFrom.arrivingFromDir);
-            case 'up':
-              return new Block(currentBlock.x, currentBlock.y - speed, currentBlock.size, movingFrom.idx, movingFrom.arrivingFromDir);
-            case 'down':
-              return new Block(currentBlock.x, currentBlock.y + speed, currentBlock.size, movingFrom.idx, movingFrom.arrivingFromDir);
-            default:
-              return currentBlock;
-          }
-        };
+        let dx = 0, dy = 0;
+        switch (this.currDir) {
+          case 'left':
+            dx = -speed;
+            break;
+          case 'right':
+            dx = speed;
+            break;
+          case 'up':
+            dy = -speed;
+            break;
+          case 'down':
+            dy = speed;
+            break;
+        }
 
-        this.currentBlock = updateBlockPosition(this.currDir, speed, this.currentBlock, this.movingFrom);
+        this.currentBlock = new Block(this.currentBlock.x + dx, this.currentBlock.y + dy, this.currentBlock.size, this.movingFrom.idx, this.movingFrom.arrivingFromDir);
       }
 
       this.currentBlock.draw(context);
